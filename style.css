@@ -1,0 +1,43 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: grey;
+  color: black;
+}
+
+.about-headline {
+  text-align: center;
+  text-transform: uppercase;
+}
+.about-picture {
+  width: 40%;
+  margin: 0 0 10px 0;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+  -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+  -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+  margin-top: 2em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
+
+.about-label {
+  font-size: 18px;
+}
+
+.about-label a {
+  font-size: 18px;
+  text-decoration: none;
+  color: #333;
+}
+
+.about-label a:hover {
+  text-decoration: underline;
+}
+
+.about-col {
+  margin-top: 30px;
+  text-align: center;
+}
