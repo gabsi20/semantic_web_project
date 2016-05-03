@@ -11,26 +11,56 @@ $(document).ready(function(){
 			'}'
 		].join(' ');
 
-		getAndDisplayResult($('#albumList'), query)
-	}
-	
-	function getAndDisplayResult(column, query) {
 		var url = 'http://dbpedia.org/sparql';
 		var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 		console.log("Query: ", query);
-		column.text("Query is loading");
+		$('#albumList').text("Query is loading");
 		$.getJSON(queryUrl,{},function(data){
 			console.log("Results: ", data);
 		    var results = data.results.bindings;
-			column.text("");
+			$('#albumList').text("");
 			if(results.length == 0) {
 				column.text("No Entry found");
 			}
 	        for (var i in results) {
-	        	column.append("<li>"+results[i].album.value+"</li>");
+	        	$('#albumList').append("<li>"+results[i].album.value+"</li>");
 	        }
 		});
+		
 	}
+
+	function findMembers(data){
+		var query = [
+			'SELECT ?artist ?membername{',
+			'?subject rdf:type <http://dbpedia.org/ontology/Band>.',
+			'?subject rdfs:label ?artist.',
+			'?subject dbo:bandMember ?member.',
+			'?member rdfs:label ?membername.',
+			'FILTER(regex(?artist,"^'+data+'","i") AND lang(?artist)="en" AND lang(?membername) = "en")',
+			'}',
+			'GROUP BY ?artist'
+			].join(' ');
+
+			var url = 'http://dbpedia.org/sparql';
+			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
+			console.log("Query: ", query);
+			$('#memberList').text("Query is loading");
+			$.getJSON(queryUrl,{},function(data){
+				console.log("Results: ", data);
+			    var results = data.results.bindings;
+				$('#memberList').text("");
+				if(results.length == 0) {
+					column.text("No Entry found");
+				}
+		        for (var i in results) {
+		        	console.log(results);
+		        	$('#memberList').append("<li>"+results[i].membername.value+"</li>");
+		        }
+			});
+		
+	}
+	
+
 
 // FIND TRACK HAUT NOCH NICHT HIN
 
@@ -57,6 +87,7 @@ $(document).ready(function(){
 
 	$('#artist').change(function(){
 		findAlbums($('#artist').val());
+		findMembers($('#artist').val());
 	});
 });
 
