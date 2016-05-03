@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+	$("#infobox").modal("show")
 	function findAlbums(data){
 		var query = [
 			'SELECT ?bandname ?album{',
