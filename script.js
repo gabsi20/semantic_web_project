@@ -1,7 +1,6 @@
 $(document).ready(function(){
 	
 	function findAlbums(data){
-		var url = 'http://dbpedia.org/sparql';
 		var query = [
 			'SELECT ?bandname ?album{',
 			'?subject rdf:type <http://dbpedia.org/ontology/Album>.',
@@ -11,16 +10,26 @@ $(document).ready(function(){
 			'FILTER(regex(?bandname,"^'+data+'","i") AND lang(?bandname)="en" AND lang(?album)="en")',
 			'}'
 		].join(' ');
+
+		getAndDisplayResult($('#albumList'), query)
+	}
+	
+	function getAndDisplayResult(column, query) {
+		var url = 'http://dbpedia.org/sparql';
 		var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
+		console.log("Query: ", query);
+		column.text("Query is loading");
 		$.getJSON(queryUrl,{},function(data){
-			console.log(data);
+			console.log("Results: ", data);
 		    var results = data.results.bindings;
+			column.text("");
+			if(results.length == 0) {
+				column.text("No Entry found");
+			}
 	        for (var i in results) {
-	        	$('#albumList').append("<li>"+results[i].album.value+"</li>");
-	        	//findTracks(results[i].album.value);
+	        	column.append("<li>"+results[i].album.value+"</li>");
 	        }
 		});
-		
 	}
 
 // FIND TRACK HAUT NOCH NICHT HIN
