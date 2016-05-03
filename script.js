@@ -11,52 +11,89 @@ $(document).ready(function(){
 			'}'
 		].join(' ');
 
-		getAndDisplayResult($('#albumList'), query)
-	}
-	
-	function getAndDisplayResult(column, query) {
 		var url = 'http://dbpedia.org/sparql';
 		var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 		console.log("Query: ", query);
-		column.text("Query is loading");
+		$('#albumList').text("Query is loading");
 		$.getJSON(queryUrl,{},function(data){
 			console.log("Results: ", data);
 		    var results = data.results.bindings;
-			column.text("");
+			$('#albumList').text("");
 			if(results.length == 0) {
-				column.text("No Entry found");
+				$('#memberList').text("No Entry found");
 			}
 	        for (var i in results) {
-	        	column.append("<li>"+results[i].album.value+"</li>");
+	        	$('#albumList').append("<li>"+results[i].album.value+"</li>");
 	        }
 		});
+		
 	}
 
-// FIND TRACK HAUT NOCH NICHT HIN
-
-	/*function findTracks(data){
-		var url = 'http://dbpedia.org/sparql';
+	function findMembers(data){
 		var query = [
-			'SELECT ?song ?albumname{',
-			'?subject rdf:type <http://dbpedia.org/ontology/MusicalWork>.',
+			'SELECT ?artist ?membername{',
+			'?subject rdf:type <http://dbpedia.org/ontology/Band>.',
+			'?subject rdfs:label ?artist.',
+			'?subject dbo:bandMember ?member.',
+			'?member rdfs:label ?membername.',
+			'FILTER(regex(?artist,"^'+data+'","i") AND lang(?artist)="en" AND lang(?membername) = "en")',
+			'}',
+			'GROUP BY ?artist'
+			].join(' ');
+
+			var url = 'http://dbpedia.org/sparql';
+			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
+			console.log("Query: ", query);
+			$('#memberList').text("Query is loading");
+			$.getJSON(queryUrl,{},function(data){
+				console.log("Results: ", data);
+			    var results = data.results.bindings;
+				$('#memberList').text("");
+				if(results.length == 0) {
+					$('#memberList').text("No Entry found");
+				}
+		        for (var i in results) {
+		        	console.log(results);
+		        	$('#memberList').append("<li>"+results[i].membername.value+"</li>");
+		        }
+			});	
+	}
+
+	function findSongs(data){
+		var query = [
+			'Select ?song ?bandname{',
+			'?subject rdf:type <http://dbpedia.org/ontology/Song>.',
 			'?subject rdfs:label ?song.',
-			'?subject dbp:fromAlbum ?album.',
-			'?album rdfs:label ?albumname.',
-			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname) = "en" AND lang(?song) = "en")',
+			'?subject dbo:artist ?band.',
+			'?band rdfs:label ?bandname.',
+			'FILTER(regex(?bandname,"^'+data+'","i") AND lang(?song) = "en" AND lang(?bandname) = "en")',
 			'}'
 		].join(' ');
+
+		var url = 'http://dbpedia.org/sparql';
 		var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
+		console.log("Query: ", query);
+		$('#trackList').text("Query is loading");
 		$.getJSON(queryUrl,{},function(data){
-			console.log(data);
+			console.log("Results: ", data);
 		    var results = data.results.bindings;
+			$('#trackList').text("");
+			if(results.length == 0) {
+				$('#trackList').text("No Entry found");
+			}
 	        for (var i in results) {
-	        	$('#trackList').append("<li>"+results[i].album.value+"</li>");
+	        	console.log(results);
+	        	$('#trackList').append("<li>"+results[i].song.value+"</li>");
 	        }
-		});
-	}*/
+		});	
+	}
+	
+
 
 	$('#artist').change(function(){
 		findAlbums($('#artist').val());
+		findMembers($('#artist').val());
+		findSongs($('#artist').val());
 	});
 });
 
