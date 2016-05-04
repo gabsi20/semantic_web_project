@@ -25,13 +25,14 @@ $(document).ready(function(){
 				$('#albumList').text("No Entry found");
 			}
 	        for (var i in results) {
-				$('#albumList').append(function() {
-					var album = results[i].album.value;
+	        	var album = results[i].album.value;
+	        	findTitlesOfAlbum(album);
+				$('#albumList').append(function(){					
 					return $('<a><li>'+album+'</li></a>').click(function() {
 						console.log(album);
 						findTitlesOfAlbum(album);
 					});
-				})
+				});
 	        }
 		});
 		
@@ -133,7 +134,7 @@ $(document).ready(function(){
 					console.log("No Entry found")
 				}
 		        for (var i in results) {
-		        	console.log(results[i].title.value);
+		        	$('#trackList').append("<li>"+results[i].title.value+"</li>")
 		        }
 			});	
 	}
