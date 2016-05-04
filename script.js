@@ -66,6 +66,52 @@ $(document).ready(function(){
 		        }
 			});	
 	}
+	function getAlbumInfo(data) {
+		var query = [
+			'SELECT DISTINCT ?cover, ?label, ?released, ?runtime, ?comment {',
+  			'?album a <http://dbpedia.org/ontology/Album>.',
+  			'?album foaf:name ?albumname.',
+  			'?album rdfs:comment ?comment.',
+  			'?album <http://dbpedia.org/ontology/Work/runtime> ?runtime.',
+  			'?album dbp:cover ?cover.',
+  			'?album dbp:label ?label.',
+  			'?album dbp:released ?released',
+  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
+			'}'].join(' ');
+			
+			var url = 'http://dbpedia.org/sparql';
+			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
+			console.log("Query: ", query);
+			$.getJSON(queryUrl,{},function(data){
+				//console.log("Results: ", data);
+			    var results = data.results.bindings;
+				console.log(results[0]);
+				getCover(results[0].cover.value);
+			});	
+	}
+	
+	function getCover(url) {
+		$.ajax({
+			url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url|size&titles=File:"+url,
+			type: 'GET',
+			crossDomain: true,
+			dataType: 'jsonp',
+			success: function(data) {
+				$.each(data, walker);
+			},
+		});
+	}
+
+	function walker(key, value, callback) {
+		if(key === "url") {
+			console.log(value)
+			//Hier muss das Cover in den DOM eingefügt werden
+		}
+
+		if (value !== null && typeof value === "object") {
+			$.each(value, walker, callback);
+		}
+	}
 	
 	function findTitlesOfAlbum(data) {
 		var query = [
@@ -129,7 +175,7 @@ $(document).ready(function(){
 		findSongs($('#artist').val());
 	});
 	
-	findTitlesOfAlbum("...And Justice for All");
+	getAlbumInfo("...And Justice for All");
 });
 
 
