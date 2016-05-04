@@ -83,7 +83,7 @@ $(document).ready(function(){
   			'dbp:cover ?cover;',
   			'dbp:label ?label;',
   			'dbp:released ?released',
-  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
+  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en" AND lang(?comment)="en")',
 			'}'].join(' ');
 			
 			$("#infobox .modal-title").text(data)
