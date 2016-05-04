@@ -94,6 +94,9 @@ $(document).ready(function(){
 			var url = 'http://dbpedia.org/sparql';
 			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 			console.log("Query: ", query);
+			$("#infobox .modal-abstract").text("")
+			$("#infobox .modal-image").attr("src","");
+
 			$.getJSON(queryUrl,{},function(data){
 				//console.log("Results: ", data);
 			    var results = data.results.bindings;
@@ -103,7 +106,6 @@ $(document).ready(function(){
 					getCover(results[0].cover.value);
 				} else {
 					console.log("Kein COVER vorhanden");
-					$("#infobox .modal-image").attr("src","");
 				}
 
 			});	
