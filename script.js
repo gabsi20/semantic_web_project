@@ -92,7 +92,7 @@ $(document).ready(function(){
 			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 			console.log("Query: ", query);
 			$("#infobox .modal-abstract").text("")
-			$("#infobox .modal-image").attr("src","");
+			$("#infobox .modal-image").attr("style","display:none;");
 
 			$.getJSON(queryUrl,{},function(data){
 				//console.log("Results: ", data);
@@ -125,6 +125,7 @@ $(document).ready(function(){
 	function walker(key, value, callback) {
 		if(key === "url") {
 			console.log(value)
+			$("#infobox .modal-image").attr("style","display:inline-block;");
 			$("#infobox .modal-image").attr("src",value);
 		}
 
