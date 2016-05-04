@@ -24,15 +24,20 @@ $(document).ready(function(){
 				$('#albumList').text("No Entry found");
 			}
 	        for (var i in results) {
-				$('#albumList').append(function() {
-					var album = results[i].album.value;
+	        	var album = results[i].album.value;
+	        	findTitlesOfAlbum(album);
+				$('#albumList').append(function(){					
 					return $('<a><li>'+album+'</li></a>').click(function() {
 						$("#infobox").modal("show")
 						console.log(album);
-						findTitlesOfAlbum(album);
+						let result = findTitlesOfAlbum(album);
+						console.log("test",result)
+						$.each(result, function(index, value){
+							$("#infobox .modal-list").append(`<li>${value.title.value}</li>`)
+						})
 						getAlbumInfo(album)
 					});
-				})
+				});
 	        }
 		});
 		
@@ -138,10 +143,11 @@ $(document).ready(function(){
 					console.log("No Entry found")
 				}
 		        for (var i in results) {
-					$("#infobox .modal-list").append(`<li>${results[i].title.value}</li>`)
-		        	console.log(results[i].title.value);
+		        	$('#trackList').append("<li>"+results[i].title.value+"</li>")
 		        }
+		        return results;
 			});	
+			
 	}
 
 	function findSongs(data){
