@@ -28,8 +28,9 @@ $(document).ready(function(){
 	        	findTitlesOfAlbum(album,results[i].subject.value);
 				$('#albumList').append(function() {
 					var album = results[i].album.value;
-					return $('<a><li data="'+results[i].subject.value+'">'+album+'</li></a>').click(function() {
-						displayInfo(album,results[i].subject.value);
+					var hehe = results[i].subject.value
+					return $('<a><li data="'+hehe+'">'+album+'</li></a>').click(function() {
+						displayInfo(album,hehe);
 					});
 				})
 	        }
@@ -37,12 +38,12 @@ $(document).ready(function(){
 		
 	}
 
-	function displayInfo(album) {
+	function displayInfo(album, data) {
 		$("#infobox").modal("show");
 		$("#infobox .modal-list").text("");
 		getAlbumInfo(album);
 				
-			findTitlesOfAlbum(album);
+			findTitlesOfAlbum(album, data);
 	}
 
 	function findMembers(data){
