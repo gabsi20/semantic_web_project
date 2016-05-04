@@ -37,14 +37,11 @@ $(document).ready(function(){
 	}
 
 	function displayInfo(album) {
-		var infos = getAlbumInfo(album);
-		var titles = findTitlesOfAlbum(album);		
-		$("#infobox").modal("show")
-		$.each(titles, function(index, value){
-			$("#infobox .modal-list").append(`<li>	${value.title.value}</li>`)
-		})
-		
-		
+		$("#infobox").modal("show");
+		$("#infobox .modal-list").text("");
+		getAlbumInfo(album);
+		findTitlesOfAlbum(album);		
+			
 	}
 
 	function findMembers(data){
@@ -98,7 +95,9 @@ $(document).ready(function(){
 				//console.log("Results: ", data);
 			    var results = data.results.bindings;
 			    console.log(results[0])
-				$("#infobox .modal-abstract").text(results[0].comment.value)
+				if(results[0].comment) {
+					$("#infobox .modal-abstract").text(results[0].comment.value)
+				}
 				if(results[0].cover) {
 					getCover(results[0].cover.value);
 				} else {
@@ -148,13 +147,16 @@ $(document).ready(function(){
 			$.getJSON(queryUrl,{},function(data){
 				console.log("Results: ", data);
 			    var results = data.results.bindings;
+
+
 				if(results.length == 0) {
 					console.log("No Entry found")
+					return;
 				}
-		        for (var i in results) {
-		        	$('#trackList').append("<li>"+results[i].title.value+"</li>")
-		        }
-		        return results;
+
+				$.each(results, function(index, value){
+					$("#infobox .modal-list").append(`<li>	${value.title.value}</li>`)
+				})
 			});	
 			
 	}
