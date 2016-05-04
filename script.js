@@ -1,7 +1,6 @@
 //API Call for Cover information
 //https://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url|size&titles=File:[filename]
 $(document).ready(function(){
-	$("#infobox").modal("show")
 	function findAlbums(data){
 		var query = [
 			'SELECT DISTINCT ?bandname ?album{',
@@ -26,16 +25,23 @@ $(document).ready(function(){
 			}
 	        for (var i in results) {
 	        	var album = results[i].album.value;
-	        	findTitlesOfAlbum(album);
-				$('#albumList').append(function(){					
+				$('#albumList').append(function() {
+					var album = results[i].album.value;
 					return $('<a><li>'+album+'</li></a>').click(function() {
-						console.log(album);
-						findTitlesOfAlbum(album);
+						displayInfo(album);
 					});
-				});
+				})
 	        }
 		});
 		
+	}
+
+	function displayInfo(album) {
+		$("#infobox").modal("show");
+		$("#infobox .modal-list").text("");
+		getAlbumInfo(album);
+		findTitlesOfAlbum(album);		
+			
 	}
 
 	function findMembers(data){
@@ -70,6 +76,7 @@ $(document).ready(function(){
 	function getAlbumInfo(data) {
 		var query = [
 			'SELECT DISTINCT ?cover, ?label, ?released, ?runtime, ?comment {',
+<<<<<<< HEAD
   			'?album a dbo:Album;',
   			'foaf:name ?albumname;',
   			'rdfs:comment ?comment;',
@@ -78,16 +85,37 @@ $(document).ready(function(){
   			'dbp:label ?label;',
   			'dbp:released ?released',
   			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
+=======
+  			'?album a <http://dbpedia.org/ontology/Album>.',
+  			'?album foaf:name ?albumname.',
+  			'?album rdfs:comment ?comment.',
+  			'?album <http://dbpedia.org/ontology/Work/runtime> ?runtime.',
+  			'?album dbp:cover ?cover.',
+  			'?album dbp:label ?label.',
+  			'?album dbp:released ?released',
+  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en" AND lang(?comment) = "en")',
+>>>>>>> 834bd3bffd043be7c8df45336fc9a1bd504b0975
 			'}'].join(' ');
 			
+			$("#infobox .modal-title").text(data)
+
 			var url = 'http://dbpedia.org/sparql';
 			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 			console.log("Query: ", query);
 			$.getJSON(queryUrl,{},function(data){
 				//console.log("Results: ", data);
 			    var results = data.results.bindings;
-				console.log(results[0]);
-				getCover(results[0].cover.value);
+			    console.log(results[0])
+				if(results[0].comment) {
+					$("#infobox .modal-abstract").text(results[0].comment.value)
+				}
+				if(results[0].cover) {
+					getCover(results[0].cover.value);
+				} else {
+					console.log("Kein COVER vorhanden");
+					$("#infobox .modal-image").attr("src","");
+				}
+
 			});	
 	}
 	
@@ -106,7 +134,7 @@ $(document).ready(function(){
 	function walker(key, value, callback) {
 		if(key === "url") {
 			console.log(value)
-			//Hier muss das Cover in den DOM eingefügt werden
+			$("#infobox .modal-image").attr("src",value);
 		}
 
 		if (value !== null && typeof value === "object") {
@@ -130,13 +158,18 @@ $(document).ready(function(){
 			$.getJSON(queryUrl,{},function(data){
 				console.log("Results: ", data);
 			    var results = data.results.bindings;
+
+
 				if(results.length == 0) {
 					console.log("No Entry found")
+					return;
 				}
-		        for (var i in results) {
-		        	$('#trackList').append("<li>"+results[i].title.value+"</li>")
-		        }
+
+				$.each(results, function(index, value){
+					$("#infobox .modal-list").append(`<li>	${value.title.value}</li>`)
+				})
 			});	
+			
 	}
 
 	function findSongs(data){
@@ -175,8 +208,6 @@ $(document).ready(function(){
 		findMembers($('#artist').val());
 		findSongs($('#artist').val());
 	});
-	
-	getAlbumInfo("...And Justice for All");
 });
 
 
