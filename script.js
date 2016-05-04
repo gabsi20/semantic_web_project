@@ -41,7 +41,7 @@ $(document).ready(function(){
 	function displayInfo(album, data) {
 		$("#infobox").modal("show");
 		$("#infobox .modal-list").text("");
-		getAlbumInfo(album);
+		getAlbumInfo(album, data);
 				
 			findTitlesOfAlbum(album, data);
 	}
@@ -75,17 +75,15 @@ $(document).ready(function(){
 		        }
 			});	
 	}
-	function getAlbumInfo(data) {
+	function getAlbumInfo(data, album) {
 		var query = [
 			'SELECT DISTINCT ?cover, ?label, ?released, ?runtime, ?comment {',
-  			'?album a dbo:Album;',
-  			'foaf:name ?albumname;',
-  			'rdfs:comment ?comment;',
+  			'<'+album+'> rdfs:comment ?comment;',
   			'dbo:runtime ?runtime;',
   			'dbp:cover ?cover;',
   			'dbp:label ?label;',
   			'dbp:released ?released',
-  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en" AND lang(?comment)="en")',
+  			'FILTER(lang(?comment)="en")',
 			'}'].join(' ');
 			
 			$("#infobox .modal-title").text(data)
