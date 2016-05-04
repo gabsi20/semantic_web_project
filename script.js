@@ -5,9 +5,9 @@ $(document).ready(function(){
 	function findAlbums(data){
 		var query = [
 			'SELECT DISTINCT ?bandname ?album{',
-			'?subject rdf:type <http://dbpedia.org/ontology/Album>.',
-			'?subject foaf:name ?album.',
-			'?subject dbo:artist ?band.',
+			'?subject a dbo:Album;',
+			'foaf:name ?album;',
+			'dbo:artist ?band.',
 			'?band rdfs:label ?bandname',
 			'FILTER(regex(?bandname,"^'+data+'","i") AND lang(?bandname)="en" AND lang(?album)="en")',
 			'}'
@@ -70,13 +70,13 @@ $(document).ready(function(){
 	function getAlbumInfo(data) {
 		var query = [
 			'SELECT DISTINCT ?cover, ?label, ?released, ?runtime, ?comment {',
-  			'?album a <http://dbpedia.org/ontology/Album>.',
-  			'?album foaf:name ?albumname.',
-  			'?album rdfs:comment ?comment.',
-  			'?album <http://dbpedia.org/ontology/Work/runtime> ?runtime.',
-  			'?album dbp:cover ?cover.',
-  			'?album dbp:label ?label.',
-  			'?album dbp:released ?released',
+  			'?album a dbo:Album;',
+  			'foaf:name ?albumname;',
+  			'rdfs:comment ?comment;',
+  			'dbo:runtime ?runtime;',
+  			'dbp:cover ?cover;',
+  			'dbp:label ?label;',
+  			'dbp:released ?released',
   			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
 			'}'].join(' ');
 			
@@ -118,9 +118,9 @@ $(document).ready(function(){
 		var query = [
 			'SELECT ?title',
 			'WHERE {',
-			'?album rdf:type <http://dbpedia.org/ontology/Album>.',
-			'?album rdfs:label ?albumname.',
-			'?album <http://dbpedia.org/property/title> ?title.',
+			'?album a dbo:Album;',
+			'rdfs:label ?albumname;',
+			'dbp:title ?title.',
 			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname) = "en" AND lang(?title) = "en")',
 			'}'].join(' ');
 			
@@ -142,9 +142,9 @@ $(document).ready(function(){
 	function findSongs(data){
 		var query = [
 			'Select ?song ?bandname{',
-			'?subject rdf:type <http://dbpedia.org/ontology/Song>.',
-			'?subject rdfs:label ?song.',
-			'?subject dbo:artist ?band.',
+			'?subject a dbo:Song;',
+			'rdfs:label ?song;',
+			'dbo:artist ?band.',
 			'?band rdfs:label ?bandname.',
 			'FILTER(regex(?bandname,"^'+data+'","i") AND lang(?song) = "en" AND lang(?bandname) = "en")',
 			'}'
