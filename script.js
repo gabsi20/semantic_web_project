@@ -1,7 +1,6 @@
 //API Call for Cover information
 //https://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url|size&titles=File:[filename]
 $(document).ready(function(){
-	$("#infobox").modal("show")
 	function findAlbums(data){
 		var query = [
 			'SELECT DISTINCT ?bandname ?album{',
@@ -28,8 +27,10 @@ $(document).ready(function(){
 				$('#albumList').append(function() {
 					var album = results[i].album.value;
 					return $('<a><li>'+album+'</li></a>').click(function() {
+						$("#infobox").modal("show")
 						console.log(album);
 						findTitlesOfAlbum(album);
+						getAlbumInfo(album)
 					});
 				})
 	        }
@@ -79,14 +80,18 @@ $(document).ready(function(){
   			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
 			'}'].join(' ');
 			
+			$("#infobox .modal-title").text(data)
+
 			var url = 'http://dbpedia.org/sparql';
 			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 			console.log("Query: ", query);
 			$.getJSON(queryUrl,{},function(data){
 				//console.log("Results: ", data);
 			    var results = data.results.bindings;
-				console.log(results[0]);
-				getCover(results[0].cover.value);
+			    console.log(results[0])
+				$("#infobox .modal-abstract").text(results[0].comment.value)
+				if(results[0].cover)
+					getCover(results[0].cover.value);
 			});	
 	}
 	
@@ -105,7 +110,7 @@ $(document).ready(function(){
 	function walker(key, value, callback) {
 		if(key === "url") {
 			console.log(value)
-			//Hier muss das Cover in den DOM eingefügt werden
+			$("#infobox .modal-image").attr("src",value);
 		}
 
 		if (value !== null && typeof value === "object") {
@@ -133,6 +138,7 @@ $(document).ready(function(){
 					console.log("No Entry found")
 				}
 		        for (var i in results) {
+					$("#infobox .modal-list").append(`<li>${results[i].title.value}</li>`)
 		        	console.log(results[i].title.value);
 		        }
 			});	
