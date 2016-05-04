@@ -25,21 +25,25 @@ $(document).ready(function(){
 			}
 	        for (var i in results) {
 	        	var album = results[i].album.value;
-	        	findTitlesOfAlbum(album);
-				$('#albumList').append(function(){					
+				$('#albumList').append(function() {
+					var album = results[i].album.value;
 					return $('<a><li>'+album+'</li></a>').click(function() {
-						$("#infobox").modal("show")
-						console.log(album);
-						let result = findTitlesOfAlbum(album);
-						console.log("test",result)
-						$.each(result, function(index, value){
-							$("#infobox .modal-list").append(`<li>${value.title.value}</li>`)
-						})
-						getAlbumInfo(album)
+						displayInfo(album);
 					});
-				});
+				})
 	        }
 		});
+		
+	}
+
+	function displayInfo(album) {
+		var infos = getAlbumInfo(album);
+		var titles = findTitlesOfAlbum(album);		
+		$("#infobox").modal("show")
+		$.each(titles, function(index, value){
+			$("#infobox .modal-list").append(`<li>	${value.title.value}</li>`)
+		})
+		
 		
 	}
 
@@ -82,7 +86,7 @@ $(document).ready(function(){
   			'?album dbp:cover ?cover.',
   			'?album dbp:label ?label.',
   			'?album dbp:released ?released',
-  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
+  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en" AND lang(?comment) = "en")',
 			'}'].join(' ');
 			
 			$("#infobox .modal-title").text(data)
@@ -95,8 +99,13 @@ $(document).ready(function(){
 			    var results = data.results.bindings;
 			    console.log(results[0])
 				$("#infobox .modal-abstract").text(results[0].comment.value)
-				if(results[0].cover)
+				if(results[0].cover) {
 					getCover(results[0].cover.value);
+				} else {
+					console.log("Kein COVER vorhanden");
+					$("#infobox .modal-image").attr("src","");
+				}
+
 			});	
 	}
 	
@@ -186,8 +195,6 @@ $(document).ready(function(){
 		findMembers($('#artist').val());
 		findSongs($('#artist').val());
 	});
-	
-	getAlbumInfo("...And Justice for All");
 });
 
 
