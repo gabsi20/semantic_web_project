@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	function findAlbums(data){
 		var query = [
-			'SELECT DISTINCT ?bandname ?album{',
+			'SELECT DISTINCT ?bandname ?album ?subject{',
 			'?subject a dbo:Album;',
 			'foaf:name ?album;',
 			'dbo:artist ?band.',
@@ -25,11 +25,11 @@ $(document).ready(function(){
 			}
 	        for (var i in results) {
 	        	var album = results[i].album.value;
-	        	findTitlesOfAlbum(album);
+	        	findTitlesOfAlbum(album,results[i].subject.value);
 				$('#albumList').append(function() {
 					var album = results[i].album.value;
-					return $('<a><li>'+album+'</li></a>').click(function() {
-						displayInfo(album);
+					return $('<a><li data="'+results[i].subject.value+'">'+album+'</li></a>').click(function() {
+						displayInfo(album,results[i].subject.value);
 					});
 				})
 	        }
@@ -135,14 +135,12 @@ $(document).ready(function(){
 		}
 	}
 	
-	function findTitlesOfAlbum(data) {
+	function findTitlesOfAlbum(data,album) {
 		var query = [
 			'SELECT ?title',
 			'WHERE {',
-			'?album a dbo:Album;',
-			'rdfs:label ?albumname;',
-			'dbp:title ?title.',
-			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname) = "en" AND lang(?title) = "en")',
+			'<'+album+'> dbp:title ?title.',
+			'FILTER(lang(?title) = "en")',
 			'}'].join(' ');
 			
 			var url = 'http://dbpedia.org/sparql';
