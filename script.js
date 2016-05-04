@@ -25,6 +25,7 @@ $(document).ready(function(){
 			}
 	        for (var i in results) {
 	        	var album = results[i].album.value;
+	        	findTitlesOfAlbum(album);
 				$('#albumList').append(function() {
 					var album = results[i].album.value;
 					return $('<a><li>'+album+'</li></a>').click(function() {
@@ -40,8 +41,8 @@ $(document).ready(function(){
 		$("#infobox").modal("show");
 		$("#infobox .modal-list").text("");
 		getAlbumInfo(album);
-		findTitlesOfAlbum(album);		
-			
+				
+			findTitlesOfAlbum(album);
 	}
 
 	function findMembers(data){
@@ -155,6 +156,7 @@ $(document).ready(function(){
 				}
 
 				$.each(results, function(index, value){
+					$('#trackList').append("<li>"+value.title.value+"</li>");
 					$("#infobox .modal-list").append(`<li>	${value.title.value}</li>`)
 				})
 			});	
