@@ -84,7 +84,7 @@ $(document).ready(function(){
   			'dbp:cover ?cover;',
   			'dbp:label ?label;',
   			'dbp:released ?released',
-  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en")',
+  			'FILTER(regex(?albumname, "^'+data+'", "i") AND lang(?albumname)="en" AND lang(?comment)="en")',
 			'}'].join(' ');
 			
 			$("#infobox .modal-title").text(data)
@@ -92,6 +92,9 @@ $(document).ready(function(){
 			var url = 'http://dbpedia.org/sparql';
 			var queryUrl = encodeURI(url + '?query=' + query + '&format=json');
 			console.log("Query: ", query);
+			$("#infobox .modal-abstract").text("")
+			$("#infobox .modal-image").attr("style","display:none;");
+
 			$.getJSON(queryUrl,{},function(data){
 				//console.log("Results: ", data);
 			    var results = data.results.bindings;
@@ -103,7 +106,6 @@ $(document).ready(function(){
 					getCover(results[0].cover.value);
 				} else {
 					console.log("Kein COVER vorhanden");
-					$("#infobox .modal-image").attr("src","");
 				}
 
 			});	
@@ -124,6 +126,7 @@ $(document).ready(function(){
 	function walker(key, value, callback) {
 		if(key === "url") {
 			console.log(value)
+			$("#infobox .modal-image").attr("style","display:inline-block;");
 			$("#infobox .modal-image").attr("src",value);
 		}
 
